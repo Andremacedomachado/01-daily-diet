@@ -4,7 +4,7 @@
   "description": "This is a REST API for diet management, designed to apply basic concepts learned.",
   "main": "src/server.js",
   "scripts": {
-    "dev": "node --watch ./src/server.js"
+    "dev": "node --watch src/server.js"
   },
   "keywords": [],
   "author": "",
