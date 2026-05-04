@@ -20,10 +20,13 @@ export class Database {
         fs.writeFile(databasePath, JSON.stringify(this.#database))
     }
 
-    select(table, search,) {
+    select(table, search) {
         const data = this.#database[table] ?? []
 
-        if (search) {
+        if (search?.id) {
+            return this.#database[table].find(row => row.id === search.id)
+        }
+        else if (search) {
             return data.filter((row) => {
                 return Object.entries(search).some(([key, value]) => {
                     return row[key].toLowerCase().includes(value.toLowerCase())

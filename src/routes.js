@@ -1,4 +1,7 @@
+import { Database } from "./database.js"
 import { buildeRoutePath } from "./utils/build-route-path.js"
+
+const database = new Database()
 
 export const routes = [
     {
@@ -6,8 +9,14 @@ export const routes = [
         path: buildeRoutePath('/meals'),
         handler: (req, res) => {
             //route for meal listing
+            const { search } = req.query
 
-            return res.writeHead(200).end(JSON.stringify({ message: 'Not implemented' }))
+            const meals = database.select('meals', search ? {
+                name: search,
+                description: search
+            } : null)
+
+            return res.writeHead(200).end(JSON.stringify(meals))
         }
     },
     {
@@ -15,8 +24,9 @@ export const routes = [
         path: buildeRoutePath('/meals/:id'),
         handler: (req, res) => {
             //route for obtaining meal data
-
-            return res.writeHead(200).end(JSON.stringify({ message: 'Not implemented' }))
+            const { id } = req.params
+            const meal = database.select('meals', { id })
+            return res.writeHead(200).end(JSON.stringify([meal]))
         }
     },
     {
@@ -24,7 +34,13 @@ export const routes = [
         path: buildeRoutePath('/meals'),
         handler: (req, res) => {
             //route to create a meal
-            return res.writeHead(201).end(JSON.stringify({ message: 'Not implemented' }))
+            const { name, description, onDiet = false } = req.body
+            const id = crypto.randomUUID()
+            const created_at = new Date()
+            const data = { id, name, description, created_at, onDiet }
+
+            const meal = database.insert('meals', data)
+            return res.writeHead(201).end()
         }
     },
     {
@@ -32,7 +48,13 @@ export const routes = [
         path: buildeRoutePath('/meals/:id'),
         handler: (req, res) => {
             //route to update a meal
-            return res.writeHead(200).end(JSON.stringify({ message: 'Not implemented' }))
+            const { id } = req.params
+            const { name, description, created_at, onDiet } = req.body
+            const data = { name, description, created_at, onDiet }
+
+            database.update('meals', id, data)
+
+            return res.writeHead(200).end()
         }
     },
     {
@@ -40,7 +62,9 @@ export const routes = [
         path: buildeRoutePath('/meals/:id'),
         handler: (req, res) => {
             //route to delete a meal
-            return res.writeHead(204).end(JSON.stringify({ message: 'Not implemented' }))
+            const { id } = req.params
+            const meal = database.delete('meals', id)
+            return res.writeHead(204).end()
         }
     },
 
